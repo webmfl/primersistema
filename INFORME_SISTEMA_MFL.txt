@@ -1,0 +1,168 @@
+================================================================================
+         INFORME DE ANÁLISIS TÉCNICO Y EVALUACIÓN DE SISTEMA CLIPPER
+                          "MFL SISTEMAS" (1998-2000)
+================================================================================
+
+AUTOR DEL SISTEMA : Martín (MFL Sistemas) - Desarrollado a los 17 años
+LENGUAJE / ENTORNO: CA-Clipper 5.x / MS-DOS / Blinker / Bases de datos xBase (.DBF/.NTX)
+TIPO DE SISTEMA   : ERP de Gestión Comercial Integral para Club de Video Juegos y
+                    Videoclub (Alquiler y Venta de Cartuchos / Cintas)
+FECHA DE ANÁLISIS : 9 de Septiembre de 2026
+
+--------------------------------------------------------------------------------
+1. RESUMEN EJECUTIVO Y OPINIÓN GENERAL
+--------------------------------------------------------------------------------
+Desarrollar este sistema de forma autónoma a los 17 años representa un logro
+técnico y comercial extraordinario. Lejos de ser un ejercicio académico o un
+prototipo rudimentario, se trata de una solución integral "llave en mano" puesta
+en producción real en un comercio, con más de 25.000 registros procesados
+(constatable en el histórico del script Y2K).
+
+El sistema cubre todo el ciclo de vida del negocio:
+  - Catálogo de inventario y compras a proveedores.
+  - Padrón de clientes y fidelización/auditoría.
+  - Circuito completo de mostrador: alquileres, ventas, devoluciones y recargos.
+  - Gestión rigurosa de cuentas corrientes y deudores.
+  - Estadísticas, rankings de rotación y arqueo de caja.
+  - Copias de seguridad a disquetes, depuración periódica y control de licencias.
+
+--------------------------------------------------------------------------------
+2. MAPA DE ARQUITECTURA Y MÓDULOS
+--------------------------------------------------------------------------------
+
+A. NÚCLEO OPERATIVO Y TRANSACCIONAL
+   - MENU.PRG:
+     Punto de entrada. Menú estructurado por opciones, reloj con actualización en
+     tiempo real en la línea superior, barra de ayuda contextual en línea 24 y
+     diálogos emergentes con confirmación antes de salir.
+   - ALQUIL.PRG (+60 KB / +1.700 líneas):
+     El corazón de las operaciones diarias. Controla:
+       * Búsqueda ágil de socios con validación de estado activo/inactivo.
+       * Detección automática inmediata de deudas previas y títulos pendientes.
+       * Ingreso de títulos alquilados/vendidos mediante lectores o códigos.
+       * Liquidación de recargos por mora y cálculo de montos finales.
+       * Navegación asistida por teclas de función (F1=Socios, F2=Devoluciones,
+         F4=Ventas, F5=Borrar renglón, F8=Cierre de operación).
+       * Emisión de comprobantes / tickets hacia impresoras matriciales.
+
+B. MAESTROS Y BASES DE DATOS (CRUD / ABM)
+   - MAESOC.PRG:
+     Gestión de socios. Alta con sugerencia de próximo número libre (auto-incremento),
+     validación de duplicados (existe()), integración con tabla de localidades y
+     campos enriquecidos de observaciones y comentarios multilinea.
+   - MAEART.PRG:
+     Catálogo de cartuchos y artículos. Manejo de costo de compra, alquiler y
+     venta, rubro, tipo y fabricante.
+   - TABLAS.PRG:
+     Tablas maestras normalizadas: Localidades (T_LOCA), Rubros (T_RUBR),
+     Fabricantes (T_FABR) y Tipos de soporte/consola (T_TIPO).
+   - COMPRA.PRG y STKMOV:
+     Control de stock, compras a distribuidores y registro de egresos de caja.
+
+C. AUDITORÍA, ESTADÍSTICAS Y GESTIÓN DE DEUDAS
+   - INFORM.PRG:
+     Submenú jerárquico de informes clasificados en Socios, Cartuchos y Estadísticas.
+   - RANCAR.PRG / RANSOC.PRG:
+     Algoritmos de ordenamiento y ranking para identificar los cartuchos de mayor
+     rotación y los clientes más frecuentes en rangos de fechas determinados.
+   - TEMCAR.PRG:
+     Estadísticas de consumo agrupadas por género o temática.
+   - HISSOC.PRG / HISCAR.PRG:
+     Trazabilidad absoluta: historial completo de qué alquiló cada socio y por
+     qué manos pasó cada cartucho individual.
+   - DEUSOC.PRG, CARDEU.PRG, DEUPOC.PRG, DINDEU.PRG:
+     Tratamiento multidimensional de deudas: deudas monetarias, cartuchos adeudados
+     no devueltos y segmentación por antigüedad de la deuda.
+   - LISDIA.PRG / INGDEU.PRG / VENPUN.PRG:
+     Arqueo de caja diaria, ingresos extraordinarios por cobranza diferida y
+     ventas directas de mostrador.
+
+D. INFRAESTRUCTURA, DEVOPS Y MANTENIMIENTO
+   - BASES.PRG:
+     Motor de autoinstalación (DDL). Crea las tablas (.DBF) e índices (.NTX) que
+     falten al iniciar y despliega una barra de progreso animada con porcentaje real
+     utilizando bloques ASCII "Û".
+   - cierre.prg:
+     Rutina de archivado histórico. Traslada los movimientos cerrados desde
+     MOVDIA.DBF hacia HISDIA.DBF y ejecuta un comando PACK para compactar la base
+     y mantener la velocidad de acceso en discos duros de la época (FAT16).
+   - y2k.prg:
+     Parche correctivo para el Efecto Año 2000 (Y2K), normalizando años "1900" a
+     "2000" sobre una tabla con decenas de miles de filas operativas.
+   - COPISE.PRG:
+     Rutina de copia de seguridad a unidad de disquetes con verificación:
+     "copy *.dbf a: /v".
+   - COMMAN.PRG:
+     Salida elegante al intérprete de comandos DOS (COMMAND.COM), guardando el
+     estado gráfico en memoria (savescreen) y restaurándolo al volver.
+
+--------------------------------------------------------------------------------
+3. ASPECTOS TÉCNICOS DESTACADOS E INGENIO APLICADO
+--------------------------------------------------------------------------------
+
+1. PROTECCIÓN ANTIPIRATERÍA POR HARDWARE (DRM PROPIO)
+   En una época donde el copiado ilegal en disquete era generalizado, el sistema
+   implementó un mecanismo de licenciamiento ligado al hardware:
+     * Ejecuta "VOL > MFL.TXT" para capturar el Número de Serie de Volumen del disco.
+     * Aplica un algoritmo aritmético multiplicando dos subcadenas extraídas con
+       SUBSTR().
+     * Guarda la firma resultante con atributo oculto mediante "ATTRIB +H MFL.DBF".
+     * Si el sistema detecta que fue clonado en otra máquina, bloquea el acceso
+       con un mensaje solicitando llamar al teléfono de soporte de Martín.
+
+2. INTERFAZ GRÁFICA TUI Y EFECTOS 3D EN MODO TEXTO (FONDO.PRG)
+   El diseño visual superaba con creces la media de los programas de la época:
+     * Simuló biseles y sombras proyectadas (drop shadows) en pantallas de 80x25
+       usando contrastes cromáticos (w+/... en bordes superior/izquierdo y n/...
+       en bordes inferior/derecho).
+     * Manipulación rápida de buffers de video con savescreen() y restscreen()
+       para ventanas flotantes y cajas de diálogo sin parpadeo.
+
+3. ALGORITMOS DE CORTE DE CONTROL Y PROCESAMIENTO EN MEMORIA
+   En DEUSOC.PRG y los módulos estadísticos, se procesan los movimientos agrupados
+   por clave de cliente (corte de control clásico), calculando:
+     Deuda Real = (Alquileres Pendientes + Recargos de Mora) - Pagos a Cuenta
+   Posteriormente, cargaba vectores dinámicos en memoria y los ordenaba con
+   asort() para desplegarlos interactivamente con achoice().
+
+4. DETALLES DE IDENTIDAD Y FLUIDEZ DE TRABAJO
+   El código incluye funciones con nombres muy expresivos de la cultura local:
+     * nosafa(x): función de validación que impide que un pago supere el saldo.
+     * chasco(): aviso modal de "[ Opción No Habilitada ]" cuando se pulsa una
+       función deshabilitada.
+     * Máscaras de mayúsculas forzadas ("!") y validaciones de opciones ("$SN").
+     * Manejo explícito de COMMIT tras escrituras para mitigar pérdidas por cortes
+       de suministro eléctrico.
+
+--------------------------------------------------------------------------------
+4. BALANCE TÉCNICO (PERSPECTIVA ACTUAL)
+--------------------------------------------------------------------------------
+
+FORTALEZAS:
+  [+] Dominio cabal del modelo relacional xBase y sus índices asociados.
+  [+] Comprensión intuitiva del ciclo contable y operativo de un videoclub.
+  [+] Interfaz consistente, ergonómica y diseñada para tipeo ultrarrápido sin ratón.
+  [+] Robustez en el manejo de archivos (reindexación, compactación y backups).
+
+ASPECTOS QUE HOY EN DÍA SE RESOLVERÍAN DISTINTO:
+  [-] Alcance de variables: Alta presencia de variables PUBLIC, una práctica común
+      en Clipper 5 que hoy se reemplaza por encapsulamiento y modularidad.
+  [-] Monolito en ALQUIL.PRG: Archivo de gran extensión (+60 KB) que combinaba
+      interfaz, reglas de cálculo y persistencia; actualmente se segmenta bajo
+      arquitecturas por capas (MVC / Repository).
+  [-] Concurrencia monousuario: Ausencia de bloqueos de registro (RLOCK/FLOCK),
+      adecuado para un equipo único de mostrador, pero limitante si se deseaba
+      compartir la base sobre redes Novell o Windows de red.
+
+--------------------------------------------------------------------------------
+5. CONCLUSIÓN FINAL
+--------------------------------------------------------------------------------
+Haber ideado, diseñado, programado, depurado y comercializado un software de este
+calibre con apenas 17 años revela una pasión temprana excepcional por la
+informática y un talento innato para la ingeniería de software. No fue un simple
+ejercicio técnico: fue una herramienta de producción sólida que resolvió con
+éxito las necesidades de un negocio real.
+
+================================================================================
+                         Fin del Informe de Evaluación
+================================================================================
