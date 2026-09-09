@@ -15,9 +15,19 @@ Hoy tengo **49 años** y miro este repositorio con una mezcla de orgullo, nostal
 
 Corrían mediados de los años 90 (alrededor de **1994**). No existían **Google, Stack Overflow, GitHub, YouTube ni Inteligencia Artificial**. Tampoco había internet de banda ancha ni foros inmediatos: se aprendía a fuerza de manuales impresos, ensayo, error, noches sin dormir frente a un monitor monocromo o VGA en MS-DOS, y mucha pasión autodidacta.
 
-A los **17 años**, desarrollé este **sistema integral de gestión comercial (ERP)** para un negocio real de alquiler y venta de cartuchos de videojuegos (la época dorada de *Family Game, Sega Genesis y Super Nintendo*) y películas en VHS. El sistema no fue un ejercicio de estudio: **se vendió, se instaló y funcionó durante años en producción real**, llegando a procesar más de **25.000 operaciones registradas** en sus bases de datos.
+A los **17 años**, desarrollé este **sistema integral de gestión comercial (ERP)** para un negocio real de alquiler y venta de cartuchos de videojuegos (la época dorada de *Family Game, Sega Genesis y Super Nintendo*) y películas en VHS. El sistema no fue un ejercicio de estudio: **se vendió y se utilizó de forma real e ininterrumpida en un comercio durante 3 años**, llegando a procesar más de **25.000 operaciones registradas** en sus bases de datos.
 
 Este repositorio preserva el código fuente original intacto como testimonio de mis inicios en la ingeniería de software.
+
+---
+
+## 📸 Capturas Destacadas del Código Fuente
+
+| 🔐 1. DRM Antipiratería por Hardware (1994) | ⚡ 2. Núcleo Transaccional y Validaciones |
+|:---:|:---:|
+| ![DRM Hardware](capturas/captura1_drm_hardware.png) | ![Motor Alquileres](capturas/captura2_motor_alquileres.png) |
+| **🎨 3. Motor TUI con Relieve 3D y Reloj en Vivo** | **🗄️ 4. Parche Y2K y Pipeline de Archivador** |
+| ![TUI 3D](capturas/captura3_tui_3d_engine.png) | ![Y2K y Cierre](capturas/captura4_y2k_cierre_historico.png) |
 
 ---
 
