@@ -21,6 +21,17 @@ Este repositorio preserva el código fuente original intacto como testimonio de 
 
 ---
 
+## 🖥️ El Sistema Corriendo Hoy en Emulación (MS-DOS / DOSBox)
+
+> **Captura real del ejecutable original de 1994 (`MENU.EXE`) corriendo en DOSBox en la actualidad.**  
+> Se puede apreciar el diseño TUI original: barra superior con reloj activo en tiempo real, menú flotante central con efecto de sombra proyectada (drop shadow), paleta de colores contrastada y la barra inferior de ayuda contextual para el operador.
+
+<div align="center">
+  <img src="capturas/pantalla_principal_emulada.png" alt="Pantalla Principal Emulada en DOSBox" width="700" />
+</div>
+
+---
+
 ## 📸 Capturas Destacadas del Código Fuente
 
 | 🔐 1. DRM Antipiratería por Hardware (1994) | ⚡ 2. Núcleo Transaccional y Validaciones |
